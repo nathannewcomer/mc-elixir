@@ -1,17 +1,17 @@
 import Bitwise
 
-defmodule Data do
-  @spec parse_varint(nonempty_binary()) :: {integer(), binary()}
-  def parse_varint(bytes) do
-    {result_bytes, rest} = varint_read(<<0>>, bytes)
+defmodule VarInt do
+  @spec parse(nonempty_binary()) :: {integer(), binary()}
+  def parse(bytes) do
+    {result_bytes, rest} = read_internal(<<0>>, bytes)
     result_size = bit_size(result_bytes)
     <<result_num::integer-signed-size(result_size)>> = result_bytes
 
     {result_num, rest}
   end
 
-  @spec varint_read(bitstring(), nonempty_binary()) :: {bitstring(), binary()}
-  def varint_read(value, bytes) do
+  @spec read_internal(bitstring(), nonempty_binary()) :: {bitstring(), binary()}
+  def read_internal(value, bytes) do
     <<flag::1, data::bitstring-size(7), rest::binary>> = bytes
 
     new_value = case value do
@@ -22,11 +22,10 @@ defmodule Data do
     # See if next value
     case flag do
       0 -> {new_value, rest}
-      1 -> varint_read(new_value, rest)
+      1 -> read_internal(new_value, rest)
     end
   end
 
-  #@spec varint_write(nonempty_binary()) :: nonempty_binary()
   def write(number) when number >= 0, do: write_pos(number)
   def write(number) when number < 0, do: write_neg(number)
 
