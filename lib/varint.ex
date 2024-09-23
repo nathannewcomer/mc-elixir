@@ -29,9 +29,9 @@ defmodule VarInt do
   def write(number) when number >= 0, do: write_pos(number)
   def write(number) when number < 0, do: write_neg(number)
 
-  defp write_pos(number) when number < 128, do: <<number>>
+  defp write_pos(number) when number < 64, do: <<number>>
   defp write_pos(number), do: <<1::1, number::7, write_pos(number >>> 7)::binary>>
 
-  defp write_neg(number) when number > -128, do: <<0::1, number::7>>
+  defp write_neg(number) when number > -64, do: <<0::1, number::7>>
   defp write_neg(number), do: <<1::1, number::7, write_neg(number >>> 7)::binary>>
 end
