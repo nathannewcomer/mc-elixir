@@ -4,7 +4,7 @@ defmodule VarIntTest do
 
   test "parse VarInt" do
     check all number <- StreamData.integer(), [max_runs: 1_000_000] do
-      {parsed, _rest} = VarInt.write(number) |> VarInt.parse()
+      {parsed, _rest} = Data.VarInt.write(number) |> Data.VarInt.parse()
       assert number == parsed
     end
   end

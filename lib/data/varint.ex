@@ -1,6 +1,6 @@
 import Bitwise
 
-defmodule VarInt do
+defmodule Data.VarInt do
   @spec parse(nonempty_binary()) :: {integer(), binary()}
   def parse(bytes) do
     {result_bytes, rest} = read_internal(<<0>>, bytes)
