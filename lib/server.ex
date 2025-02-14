@@ -49,10 +49,17 @@ defmodule Server do
   end
 
   def read_request(client_socket) do
-    {:ok, request} = :gen_tcp.recv(client_socket, 0)
-    IO.puts("Raw request: #{inspect(request)}")
+    {:ok, request} = :gen_tcp.recv(client_socket, 5)
 
-    request
+    # get VarInt from beginning of request
+    {request_length, rest} = Data.VarInt.parse(request)
+    {:ok, request_partial} = :gen_tcp.recv(client_socket, request_length - byte_size(rest))
+
+    request_message = rest <> request_partial
+    IO.puts("Message length: #{request_length} bytes")
+    IO.puts("Raw request data: #{inspect(request_message)}")
+
+    request_message
   end
 
   def create_response(request) do

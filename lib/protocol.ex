@@ -1,7 +1,7 @@
 defmodule McProtocol do
   def decode_request(request, state) do
-    {length, rest} = Data.VarInt.parse(request)
-    {packet_id, byte_array} = Data.VarInt.parse(rest)
+    # length is consumed by read_request()
+    {packet_id, byte_array} = Data.VarInt.parse(request)
 
     IO.puts("decoding with state #{state}")
     data = case {state, packet_id} do
@@ -9,11 +9,11 @@ defmodule McProtocol do
       _ -> IO.puts("New message found")
     end
 
-    IO.puts("Sending #{inspect({length, packet_id, data})}")
-    {length, packet_id, data}
+    IO.puts("Sending #{inspect({packet_id, data})}")
+    {packet_id, data}
   end
 
-  def server_update({_length, packet_id, data}, state, client_socket) do
+  def server_update({packet_id, data}, state, client_socket) do
     IO.puts("server_update data = #{inspect(data)}")
     case {state, packet_id} do
       {:handshaking, 0x00} -> process_handshake(data, client_socket)
