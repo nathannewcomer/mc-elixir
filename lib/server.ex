@@ -11,9 +11,9 @@ defmodule Server do
 
   def accept_connection(listen_socket) do
     # get connection
-    IO.puts("waiting for connection...\n")
+    IO.puts("waiting for connection...")
     {:ok, client_socket} = :gen_tcp.accept(listen_socket)
-    IO.puts("Connection accepted!\n")
+    IO.puts("Connection accepted.")
 
     # set initial client state
     McProtocol.client_state_put(client_socket, :handshaking)
@@ -27,9 +27,7 @@ defmodule Server do
   end
 
   def process_request(client_socket) do
-    IO.puts("Processing request...\n")
-    IO.puts("Client socket = #{inspect(client_socket)}")
-
+    IO.puts("\n")
     state = McProtocol.client_state_get(client_socket)
 
     # read, then process request
@@ -38,11 +36,10 @@ defmodule Server do
       |> McProtocol.decode_request(state)
       |> McProtocol.server_update(state, client_socket)
 
-    IO.puts("next = #{inspect(next)}")
-
     # write response if applicable
     case next do
-      :next_request -> process_request(client_socket)
+      :no_response -> process_request(client_socket)
+      {:response, data} -> write_response(data, client_socket)
       _ -> IO.puts("Next is not covered")
     end
 
