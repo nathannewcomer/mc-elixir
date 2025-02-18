@@ -7,8 +7,12 @@ defmodule Protocol.Login do
     {name, uuid}
   end
 
-  def create_response() do
-    # TODO do this leater
-    {:response, "Hello world!"}
+  def create_response({username, input_uuid}) do
+    IO.puts("Player UUID: #{inspect(input_uuid)}")
+
+    uuid = :erlang.md5("OfflinePlayer:TODO")
+      |> Base.encode16(case: :lower)
+
+
   end
 end

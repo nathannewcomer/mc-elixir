@@ -1,10 +1,10 @@
 defmodule Data.UUID do
   def parse(bytes) do
-    <<uuid::integer-unsigned-size(16), rest::binary>> = bytes
-    {uuid, rest}
+    <<uuid::binary-16, rest::binary>> = bytes
+    {uuid |> Base.encode16(), rest}
   end
 
   def write(uuid) do
-    <<uuid::integer-unsigned-size(16)>>
+    :TODO
   end
 end

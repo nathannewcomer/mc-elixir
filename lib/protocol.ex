@@ -19,21 +19,8 @@ defmodule McProtocol do
     case {state, packet_id} do
       # login
       {:handshaking, 0x00} -> Protocol.Handshake.process_handshake(data, client_socket)
-      {:login, 0x00} -> Protocol.Login.create_response()
+      {:login, 0x00} -> Protocol.Login.create_response(data)
     end
-  end
-
-  def generate_key_pair() do
-    {public_key, private_key} = :crypto.generate_key(:rsa, {1024, 65537})
-    {public_key, private_key}
-  end
-
-  def encrypt(byte_array, public_key) do
-    :crypto.public_encrypt(:rsa, byte_array, public_key, :rsa_pkcs1_padding)
-  end
-
-  def decrypt(encrypted_bytes, private_key) do
-    :crypto.private_decrypt(:rsa, encrypted_bytes, private_key, :rsa_pkcs1_padding)
   end
 
   def client_state_get(client_socket) do

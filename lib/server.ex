@@ -4,6 +4,7 @@ defmodule Server do
 
     IO.puts("Server running on #{port}...\n")
 
+    # Create client state map
     {:ok, _pid} = Agent.start_link(fn -> %{} end, name: :client_state)
 
     accept_connection(listen_socket)
